@@ -43,7 +43,8 @@ public class Main {
 
     private static void StartGame() {
         Scanner scanner = new Scanner(System.in);
-
+        
+        console.setForegroundColor(Ansi.FColor.YELLOW);
         console.print("\033[2J\033[;H");
         console.println("                  __");
         console.println("                 /  \\");
@@ -55,16 +56,19 @@ public class Main {
         console.println("  |     /_\'");
         console.println("   \\    \\_/");
         console.println("    \" \"\" \"\" \"\" \"");
+        console.setForegroundColor(Ansi.FColor.BLACK);
 
         do {
-            console.println("");
-            console.println("Player, it's your turn");
+        	console.setForegroundColor(Ansi.FColor.GREEN);
+        	console.println("**********************Player's Turn******************************");
             console.println("Enter coordinates for your shot :");
+            console.setForegroundColor(Ansi.FColor.BLACK);
             Position position = parsePosition(scanner.next());
             boolean isHit = GameController.checkIsHit(enemyFleet, position);
             if (isHit) {
                 beep();
 
+                console.setForegroundColor(Ansi.FColor.RED);
                 console.println("                \\         .  ./");
                 console.println("              \\      .:\" \";'.:..\" \"   /");
                 console.println("                  (M^^.^~~:.'\" \").");
@@ -73,17 +77,41 @@ public class Main {
                 console.println("            -   (\\- |  \\ /  |  /)  -");
                 console.println("                 -\\  \\     /  /-");
                 console.println("                   \\  \\   /  /");
+                console.setForegroundColor(Ansi.FColor.BLACK);
             }
-
+            else {
+                        	
+            	beep();
+                
+                console.setForegroundColor(Ansi.FColor.BLUE);
+                console.println("                \\         .  ./");
+                console.println("              \\      .:\" \";'.:..\" \"   /");
+                console.println("                  (M^^.^~~:.'\" \").");
+                console.println("            -   (/  .    . . \\ \\)  -");
+                console.println("               ((| :. ~ ^  :. .|))");
+                console.println("            -   (\\- |  \\ /  |  /)  -");
+                console.println("                 -\\  \\     /  /-");
+                console.println("                   \\  \\   /  /");
+                console.setForegroundColor(Ansi.FColor.BLACK);
+            	
+            }
+            
+            console.setForegroundColor(Ansi.FColor.YELLOW);
             console.println(isHit ? "Yeah ! Nice hit !" : "Miss");
+            console.setForegroundColor(Ansi.FColor.BLACK);
 
+            console.println("**********************Computer's Turn****************************");
+            
             position = getRandomPosition();
             isHit = GameController.checkIsHit(myFleet, position);
+            console.setForegroundColor(Ansi.FColor.YELLOW);
             console.println("");
             console.println(String.format("Computer shoot in %s%s and %s", position.getColumn(), position.getRow(), isHit ? "hit your ship !" : "miss"));
+            console.setForegroundColor(Ansi.FColor.BLACK);
             if (isHit) {
                 beep();
-
+                
+                console.setForegroundColor(Ansi.FColor.RED);
                 console.println("                \\         .  ./");
                 console.println("              \\      .:\" \";'.:..\" \"   /");
                 console.println("                  (M^^.^~~:.'\" \").");
@@ -92,7 +120,23 @@ public class Main {
                 console.println("            -   (\\- |  \\ /  |  /)  -");
                 console.println("                 -\\  \\     /  /-");
                 console.println("                   \\  \\   /  /");
-
+                console.setForegroundColor(Ansi.FColor.BLACK);
+                
+            } else {
+            	
+            	beep();
+                
+                console.setForegroundColor(Ansi.FColor.BLUE);
+                console.println("                \\         .  ./");
+                console.println("              \\      .:\" \";'.:..\" \"   /");
+                console.println("                  (M^^.^~~:.'\" \").");
+                console.println("            -   (/  .    . . \\ \\)  -");
+                console.println("               ((| :. ~ ^  :. .|))");
+                console.println("            -   (\\- |  \\ /  |  /)  -");
+                console.println("                 -\\  \\     /  /-");
+                console.println("                   \\  \\   /  /");
+                console.setForegroundColor(Ansi.FColor.BLACK);
+            	
             }
         } while (true);
     }
@@ -126,7 +170,8 @@ public class Main {
     private static void InitializeMyFleet() {
         Scanner scanner = new Scanner(System.in);
         myFleet = GameController.initializeShips();
-
+        
+        console.setForegroundColor(Ansi.FColor.GREEN);
         console.println("Please position your fleet (Game board has size from A to H and 1 to 8) :");
 
         for (Ship ship : myFleet) {
@@ -134,11 +179,15 @@ public class Main {
             console.println(String.format("Please enter the positions for the %s (size: %s)", ship.getName(), ship.getSize()));
             for (int i = 1; i <= ship.getSize(); i++) {
                 console.println(String.format("Enter position %s of %s (i.e A3):", i, ship.getSize()));
-
+                
+                console.setForegroundColor(Ansi.FColor.BLACK);
                 String positionInput = scanner.next();
+                console.setForegroundColor(Ansi.FColor.GREEN);
                 ship.addPosition(positionInput);
             }
         }
+        
+        console.setForegroundColor(Ansi.FColor.BLACK);
     }
 
     private static void InitializeEnemyFleet() {
