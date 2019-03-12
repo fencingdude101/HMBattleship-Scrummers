@@ -6,10 +6,11 @@ import org.scrum.psd.battleship.controller.GameController;
 import org.scrum.psd.battleship.controller.dto.Letter;
 import org.scrum.psd.battleship.controller.dto.Position;
 import org.scrum.psd.battleship.controller.dto.Ship;
+import org.scrum.psd.battleship.controller.dto.ShotResult;
 
 import java.util.List;
 import java.util.Random;
-import java.util.Scanner;
+import java.util.Scanner; 
 
 public class Main {
     private static List<Ship> myFleet;
@@ -45,7 +46,7 @@ public class Main {
         Scanner scanner = new Scanner(System.in);
         
         console.setForegroundColor(Ansi.FColor.YELLOW);
-        console.print("\033[2J\033[;H");
+        //console.print("\033[2J\033[;H");
         console.println("                  __");
         console.println("                 /  \\");
         console.println("           .-.  |    |");
@@ -56,16 +57,33 @@ public class Main {
         console.println("  |     /_\'");
         console.println("   \\    \\_/");
         console.println("    \" \"\" \"\" \"\" \"");
-        console.setForegroundColor(Ansi.FColor.BLACK);
+        console.setForegroundColor(Ansi.FColor.WHITE);
+        console.println("");
 
         do {
-        	console.setForegroundColor(Ansi.FColor.GREEN);
+        	console.setForegroundColor(Ansi.FColor.WHITE);
         	console.println("**********************Player's Turn******************************");
-            console.println("Enter coordinates for your shot :");
-            console.setForegroundColor(Ansi.FColor.BLACK);
+        	console.setForegroundColor(Ansi.FColor.GREEN);
+        	console.println("Enter coordinates for your shot :");
+            console.setForegroundColor(Ansi.FColor.WHITE);
+            console.println("");
             Position position = parsePosition(scanner.next());
-            boolean isHit = GameController.checkIsHit(enemyFleet, position);
-            if (isHit) {
+            console.println("");
+            ShotResult shotResult = GameController.checkIsHit(enemyFleet, position);
+            boolean gameLost = GameController.checkGameLost(enemyFleet);
+            
+            if (gameLost) {
+            	
+            	endGame(true);
+            	
+            }
+            
+            console.setForegroundColor(Ansi.FColor.YELLOW);
+            console.println(shotResult.isHit() ? "Yeah ! Nice hit !" : "Miss");
+            console.setForegroundColor(Ansi.FColor.WHITE);
+            console.println("");
+            
+            if (shotResult.isHit()) {
                 beep();
 
                 console.setForegroundColor(Ansi.FColor.RED);
@@ -77,13 +95,18 @@ public class Main {
                 console.println("            -   (\\- |  \\ /  |  /)  -");
                 console.println("                 -\\  \\     /  /-");
                 console.println("                   \\  \\   /  /");
-                console.setForegroundColor(Ansi.FColor.BLACK);
+                console.setForegroundColor(Ansi.FColor.WHITE);
+                
+                Ship shipHit = shotResult.getShipHit();
+                if(shipHit.isSunk()){
+                	displaySunkArt(shipHit, true);
+                }
             }
             else {
                         	
             	beep();
                 
-                console.setForegroundColor(Ansi.FColor.BLUE);
+                console.setForegroundColor(Ansi.FColor.CYAN);
                 console.println("                \\         .  ./");
                 console.println("              \\      .:\" \";'.:..\" \"   /");
                 console.println("                  (M^^.^~~:.'\" \").");
@@ -92,23 +115,37 @@ public class Main {
                 console.println("            -   (\\- |  \\ /  |  /)  -");
                 console.println("                 -\\  \\     /  /-");
                 console.println("                   \\  \\   /  /");
-                console.setForegroundColor(Ansi.FColor.BLACK);
+                console.setForegroundColor(Ansi.FColor.WHITE);
             	
             }
             
+            displayRemainingShips(enemyFleet);
+            
+            console.println("");
             console.setForegroundColor(Ansi.FColor.YELLOW);
-            console.println(isHit ? "Yeah ! Nice hit !" : "Miss");
+            console.println(shotResult.isHit() ? "Yeah ! Nice hit !" : "Miss");
             console.setForegroundColor(Ansi.FColor.BLACK);
 
             console.println("**********************Computer's Turn****************************");
             
             position = getRandomPosition();
-            isHit = GameController.checkIsHit(myFleet, position);
+            shotResult = GameController.checkIsHit(myFleet, position);
             console.setForegroundColor(Ansi.FColor.YELLOW);
+            console.println(String.format("%s%s", position.getColumn(), position.getRow()));
             console.println("");
-            console.println(String.format("Computer shoot in %s%s and %s", position.getColumn(), position.getRow(), isHit ? "hit your ship !" : "miss"));
-            console.setForegroundColor(Ansi.FColor.BLACK);
-            if (isHit) {
+            console.println(String.format("Computer shoot in %s%s and %s", position.getColumn(), position.getRow(), shotResult.isHit() ? "hit your ship !" : "miss"));
+            console.setForegroundColor(Ansi.FColor.WHITE);
+            console.println("");
+            
+            gameLost = GameController.checkGameLost(myFleet);
+            
+            if (gameLost) {
+            	
+            	endGame(true);
+            	
+            }
+            
+            if (shotResult.isHit()) {
                 beep();
                 
                 console.setForegroundColor(Ansi.FColor.RED);
@@ -120,13 +157,18 @@ public class Main {
                 console.println("            -   (\\- |  \\ /  |  /)  -");
                 console.println("                 -\\  \\     /  /-");
                 console.println("                   \\  \\   /  /");
-                console.setForegroundColor(Ansi.FColor.BLACK);
+                console.setForegroundColor(Ansi.FColor.WHITE);
+                
+                Ship shipHit = shotResult.getShipHit();
+                if(shipHit.isSunk()){
+                	displaySunkArt(shipHit, false);
+                }
                 
             } else {
             	
             	beep();
                 
-                console.setForegroundColor(Ansi.FColor.BLUE);
+                console.setForegroundColor(Ansi.FColor.CYAN);
                 console.println("                \\         .  ./");
                 console.println("              \\      .:\" \";'.:..\" \"   /");
                 console.println("                  (M^^.^~~:.'\" \").");
@@ -135,9 +177,12 @@ public class Main {
                 console.println("            -   (\\- |  \\ /  |  /)  -");
                 console.println("                 -\\  \\     /  /-");
                 console.println("                   \\  \\   /  /");
-                console.setForegroundColor(Ansi.FColor.BLACK);
-            	
+                console.setForegroundColor(Ansi.FColor.WHITE);
             }
+            
+            console.println("");
+            displayRemainingShips(myFleet);
+            console.println("");
         } while (true);
     }
 
@@ -176,20 +221,26 @@ public class Main {
         console.println("Please position your fleet (Game board has size from A to H and 1 to 8) :");
 
         for (Ship ship : myFleet) {
+        	console.setForegroundColor(Ansi.FColor.WHITE);
             console.println("");
-            console.println("*********************Entering Ship: " + ship.getName() + "******************************");
+            console.println("**********************Entering Ship: " + ship.getName() + "******************************");
+            console.println("**********************Entering Ship: " + ship.getName() + "******************************");
+            console.setForegroundColor(Ansi.FColor.GREEN);
             console.println(String.format("Please enter the positions for the %s (size: %s)", ship.getName(), ship.getSize()));
             for (int i = 1; i <= ship.getSize(); i++) {
-                console.println(String.format("Enter position %s of %s (i.e A3):", i, ship.getSize()));
+            	console.setForegroundColor(Ansi.FColor.GREEN);
+            	console.println(String.format("Enter position %s of %s (i.e A3):", i, ship.getSize()));
                 
-                console.setForegroundColor(Ansi.FColor.BLACK);
+                console.setForegroundColor(Ansi.FColor.WHITE);
+                console.println("");
                 String positionInput = scanner.next();
+                console.println("");
                 console.setForegroundColor(Ansi.FColor.GREEN);
                 ship.addPosition(positionInput);
             }
         }
         
-        console.setForegroundColor(Ansi.FColor.BLACK);
+        console.setForegroundColor(Ansi.FColor.WHITE);
     }
 
     private static void InitializeEnemyFleet() {
@@ -216,5 +267,55 @@ public class Main {
 
         enemyFleet.get(4).getPositions().add(new Position(Letter.C, 5));
         enemyFleet.get(4).getPositions().add(new Position(Letter.C, 6));
+    }
+    
+    private static void displaySunkArt(Ship ship, boolean playerTurn){
+    	
+    	console.println("/\\/\\ /---\\ /\\/\\");
+    	console.println("\\ \\/     \\/ /");
+    	console.println("  \\ | X X | /");
+    	console.println("   >|  A  |<");
+    	console.println("  / /\\   /\\ \\");
+    	console.println("/ /  |||  \\ \\");
+    	console.println("\\/\\/       \\/\\/");
+    	
+    	if(playerTurn){
+    		console.println("GAAH!  YOU SUNK MY " + ship.getName() + "!!!!");
+    	}
+    	else{
+    		console.println("HA HA HA! Your " + ship.getName() + "has been sunk!!");
+    	}
+    }
+    
+    private static void displayRemainingShips(List<Ship> fleet){
+    	console.println("Remaining Ships:");
+    	for(Ship ship : fleet){
+    		if(!ship.isSunk()){
+    			console.println("   " + ship.getName());
+    		}
+    	}
+    }
+    
+    private static void endGame(boolean playerWon) {
+    	
+    	Scanner scan = new Scanner(System.in);
+    	
+    	if (playerWon) {
+    		
+    		console.setForegroundColor(Ansi.FColor.GREEN);
+        	console.println("You Are The Winner!!!");
+    		
+    	} else {
+    		
+    		console.setForegroundColor(Ansi.FColor.RED);
+        	console.println("You Lost... :(");
+    		
+    	}
+    	
+    	console.setForegroundColor(Ansi.FColor.WHITE);
+    	console.println("Press Enter to quit...");
+    	scan.nextLine();
+    	System.exit(0);
+    	
     }
 }
