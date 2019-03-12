@@ -4,14 +4,17 @@ import org.scrum.psd.battleship.controller.dto.Color;
 import org.scrum.psd.battleship.controller.dto.Letter;
 import org.scrum.psd.battleship.controller.dto.Position;
 import org.scrum.psd.battleship.controller.dto.Ship;
+import org.scrum.psd.battleship.controller.dto.ShotResult;
 
+import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collection;
 import java.util.List;
 import java.util.Random;
 
 public class GameController {
-    public static boolean checkIsHit(Collection<Ship> ships, Position shot) {
+	
+    public static ShotResult checkIsHit(Collection<Ship> ships, Position shot) {
         if (ships == null) {
             throw new IllegalArgumentException("ships is null");
         }
@@ -20,15 +23,31 @@ public class GameController {
             throw new IllegalArgumentException("shot is null");
         }
 
+        ShotResult shotResult = new ShotResult();
+        
         for (Ship ship : ships) {
             for (Position position : ship.getPositions()) {
                 if (position.equals(shot)) {
-                    return true;
+                	shotResult.setHit(true);
+                	shotResult.setShipHit(ship);
+                    return shotResult;
                 }
             }
         }
 
-        return false;
+        return shotResult;
+    }
+    
+    
+    public static Collection<Ship> getRemainingShips(Collection<Ship> ships){
+    	List<Ship> remainingShips = new ArrayList<>();
+    	
+    	for (Ship ship : ships) {
+            if(!ship.isSunk()){
+            	remainingShips.add(ship);
+            }
+        }
+    	return remainingShips;
     }
 
     public static List<Ship> initializeShips() {
