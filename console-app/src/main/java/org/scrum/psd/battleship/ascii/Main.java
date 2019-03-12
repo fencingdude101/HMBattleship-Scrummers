@@ -170,12 +170,14 @@ public class Main {
     private static void InitializeMyFleet() {
         Scanner scanner = new Scanner(System.in);
         myFleet = GameController.initializeShips();
+
         
         console.setForegroundColor(Ansi.FColor.GREEN);
         console.println("Please position your fleet (Game board has size from A to H and 1 to 8) :");
 
         for (Ship ship : myFleet) {
             console.println("");
+            console.println("*********************Entering Ship: " + ship.getName() + "******************************");
             console.println(String.format("Please enter the positions for the %s (size: %s)", ship.getName(), ship.getSize()));
             for (int i = 1; i <= ship.getSize(); i++) {
                 console.println(String.format("Enter position %s of %s (i.e A3):", i, ship.getSize()));
