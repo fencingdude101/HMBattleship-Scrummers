@@ -5,6 +5,7 @@ import org.junit.Test;
 import org.scrum.psd.battleship.controller.dto.Letter;
 import org.scrum.psd.battleship.controller.dto.Position;
 import org.scrum.psd.battleship.controller.dto.Ship;
+import org.scrum.psd.battleship.controller.dto.ShotResult;
 
 import java.util.Arrays;
 import java.util.List;
@@ -25,9 +26,9 @@ public class GameControllerTest {
             counter++;
         }
 
-        boolean result = GameController.checkIsHit(ships, new Position(Letter.A, 1));
+        ShotResult shipHit = GameController.checkIsHit(ships, new Position(Letter.A, 1));
 
-        Assert.assertTrue(result);
+        Assert.assertTrue(shipHit.isHit());
     }
 
     @Test
@@ -45,9 +46,9 @@ public class GameControllerTest {
             counter++;
         }
 
-        boolean result = GameController.checkIsHit(ships, new Position(Letter.H, 1));
+        ShotResult shipHit = GameController.checkIsHit(ships, new Position(Letter.H, 1));
 
-        Assert.assertFalse(result);
+        Assert.assertFalse(shipHit.isHit());
     }
 
     @Test(expected = IllegalArgumentException.class)
