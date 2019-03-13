@@ -28,6 +28,7 @@ public class GameController {
         for (Ship ship : ships) {
             for (Position position : ship.getPositions()) {
                 if (position.equals(shot)) {
+                	position.setHit(true);
                 	shotResult.setHit(true);
                 	shotResult.setShipHit(ship);
                     return shotResult;
@@ -48,6 +49,23 @@ public class GameController {
             }
         }
     	return remainingShips;
+    }
+    
+    public static boolean checkGameLost(Collection<Ship> ships) {
+        
+    	boolean lost = true;
+
+        for (Ship ship : ships) {
+            
+        	if (ship.isSunk() == false) {
+        		
+        		lost = false;
+        		
+        	}
+        	
+        }
+
+        return lost;
     }
 
     public static List<Ship> initializeShips() {

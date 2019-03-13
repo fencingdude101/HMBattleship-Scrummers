@@ -3,6 +3,8 @@ package org.scrum.psd.battleship.controller.dto;
 import java.util.ArrayList;
 import java.util.List;
 
+import com.diogonunes.jcdp.color.api.Ansi;
+
 public class Ship {
     private boolean isPlaced;
     private String name;
@@ -42,6 +44,38 @@ public class Ship {
         int number = Integer.parseInt(input.substring(1));
 
         positions.add(new Position(letter, number));
+    }
+    
+    public boolean isSunk() {
+    	
+    	boolean sunk = true;
+    	
+    	for (Position position : positions) {
+        	if (position.isHit() == false) {
+        		
+        		sunk = false;
+        		
+        	}
+        }
+    	
+    	return sunk;
+    	
+    }
+    
+    public boolean isHit() {
+    	
+    	boolean hit = false;
+    	
+    	for (Position position : positions) {
+        	if (position.isHit()) {
+        		
+        		hit = true;
+        		
+        	}
+        }
+    	
+    	return hit;
+    	
     }
 
     // TODO: property change listener implementieren
